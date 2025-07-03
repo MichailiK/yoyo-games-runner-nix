@@ -5,6 +5,7 @@
   version ? null,
   gameAssets ? null, # optional game assets to copy over alongside the runner
   openssl_1_0, # OpenSSL 1.0.x
+  includeFFmpeg ? false,
   # nixpkgs inputs
   pkgs,
   lib,
@@ -58,6 +59,9 @@ stdenvNoCC.mkDerivation {
   runtimeDependencies = [
     # The runner dlopen's OpenAL and is required for audio.
     pkgs.openal
+  ] ++ lib.optionals includeFFmpeg [
+    # The runner dlopen's ffmpeg libraries when a game makes use of videos.
+    pkgs.ffmpeg_4.lib
   ];
 
   meta = {
