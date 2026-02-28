@@ -1,12 +1,13 @@
 {
   # Arguments
-  name ? "yoyo-games-runner",
   src, # game runner path/source
+  name ? "yoyo-games-runner",
   version ? null,
   gameAssets ? null, # optional game assets to copy over alongside the runner
-  openssl_1_0, # OpenSSL 1.0.x
   includeFFmpeg ? false,
-  # nixpkgs inputs
+  # flake & nixpkgs inputs
+  openssl1_0, # OpenSSL 1.0.x
+  curl-gnutls-debian,
   pkgs,
   lib,
   stdenvNoCC,
@@ -14,7 +15,7 @@
   ...
 }:
 stdenvNoCC.mkDerivation {
-  inherit name version src;
+  inherit version src;
   pname = name;
 
   env = {
@@ -45,7 +46,7 @@ stdenvNoCC.mkDerivation {
     pkgs.libz
     pkgs.xorg.libXxf86vm
     pkgs.libGL
-    (pkgs.callPackage ./debian/libcurl3-gnutls.nix { }) # for libcurl-gnutls.so.4
+    curl-gnutls-debian # for libcurl-gnutls.so.4
     pkgs.glibc # for librt.so.1 and libpthread.so.0
     pkgs.libGLU
     pkgs.xorg.libXext
@@ -53,21 +54,23 @@ stdenvNoCC.mkDerivation {
     pkgs.xorg.libXrandr
 
     # (ancient) OpenSSL 1.0 for libssl.so.1.0.0 and libcrypto.so.1.0.0
-    openssl_1_0.out
+    openssl1_0.out
   ];
 
-  runtimeDependencies = [
-    # The runner dlopen's OpenAL and is required for audio.
-    pkgs.openal
-  ] ++ lib.optionals includeFFmpeg [
-    # The runner dlopen's ffmpeg libraries when a game makes use of videos.
-    pkgs.ffmpeg_4.lib
-  ];
+  runtimeDependencies =
+    [
+      # The runner dlopen's OpenAL and is required for audio.
+      pkgs.openal
+    ]
+    ++ lib.optionals includeFFmpeg [
+      # The runner dlopen's ffmpeg libraries when a game makes use of videos.
+      pkgs.ffmpeg_4.lib
+    ];
 
   meta = {
     description = "GameMaker game runner";
     license = lib.licenses.unfree;
     mainProgram = name;
-    sourceProvenance = [ lib.sourceTypes.binaryNativeCode ];
+    sourceProvenance = [lib.sourceTypes.binaryNativeCode];
   };
 }
