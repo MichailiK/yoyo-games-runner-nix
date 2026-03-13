@@ -18,7 +18,7 @@ stdenvNoCC.mkDerivation {
   inherit version src;
   pname = name;
 
-  env = {
+  env = lib.optionalAttrs (gameAssets != null) {
     GAME_ASSETS = gameAssets;
   };
 
@@ -68,9 +68,6 @@ stdenvNoCC.mkDerivation {
     ];
 
   meta = {
-    description = "GameMaker game runner";
-    license = lib.licenses.unfree;
     mainProgram = name;
-    sourceProvenance = [lib.sourceTypes.binaryNativeCode];
   };
 }

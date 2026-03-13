@@ -15,7 +15,9 @@
         system: callback nixpkgs.legacyPackages.${system}
       );
 
-    openssl1_0' = pkgs: nixpkgs-openssl.legacyPackages.${pkgs.stdenv.hostPlatform.system}.openssl_1_0_2;
+    openssl1_0' = pkgs: (nixpkgs-openssl.legacyPackages.${pkgs.stdenv.hostPlatform.system}.openssl_1_0_2).overrideAttrs (prev: {
+      meta.knownVulnerabilities = [];
+    });
     curl-gnutls-debian' = pkgs: pkgs.callPackage ./curl-gnutls-debian.nix {};
     yoyo-games-runner' = pkgs: args:
       pkgs.callPackage ./yoyo-games-runner.nix (args

@@ -1,9 +1,18 @@
 # `yoyo-games-runner-nix`
 
-A utility which allows packaging YoYo Games Linux Runner for Nix/NixOS,
+A utility which allows packaging GMS/YoYo Games Linux Runner for Nix/NixOS,
 thus making the process of packaging GameMaker games easier.
 
 Only `x86_64-linux` & `aarch64-linux` systems are supported for now.
+
+## Source governance & Security notice
+
+The GMS runner is proprietary. For the sake of user experience, the
+derivations produced by `mkYoYoGamesRunner` do not get marked as unfree by default.
+
+Additionally, GMS depends on OpenSSL 1.0. Support for OpenSSL 1.0 has ended in 2019.
+However, it does not look like GMS is actually using OpenSSL. Because of this
+and for the sake of user experience, the package is not marked as insecure either.
 
 ## Usage
 
@@ -40,7 +49,7 @@ Import the flake in your `flake.nix`, then use the `mkYoYoGamesRunner` function:
 
 Then you should be able to launch your GameMaker game:
 ```sh
-$ NIXPKGS_ALLOW_UNFREE=1 NIXPKGS_ALLOW_INSECURE=1 nix run --impure .#deltarune
+$ nix run .#deltarune
 ```
 
 ## Q&A
@@ -53,7 +62,6 @@ I believe it is more useful to allow you to input an arbitrary binary, that then
 gets patched to allow running in Nix/NixOS systems.
 
 ### Why am I building OpenSSL 1.0.2u?
-### Why is the derivation considered insecure?
 
 The YoYo Games Runner depends on OpenSSL 1.0, which has been end-of-life
 since 2019 & is thus considered insecure.
@@ -67,3 +75,11 @@ The YoYo Games Runner depends on
 [Debian-specific symbol versioning of `libcurl3-gnutls`](https://bugs.debian.org/1020780).
 The patch can be found at <https://sources.debian.org/patches/curl/> as
 `ZZZgnutls build.patch`. This patch requires curl to be rebuilt locally.
+
+
+## Other notes
+
+This is a sister project of [deltarune-nix], a Nix flake for running the RPG
+GameMaker game DELTARUNE on Nix/NixOS systems, including TAS tools.
+
+[deltarune-nix]: https://github.com/MichailiK/deltarune-nix
